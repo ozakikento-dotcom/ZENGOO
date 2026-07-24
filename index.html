@@ -1,87 +1,56 @@
-<!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="ja"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>今日の禅語</title>
+<script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
 <style>
 :root{--bg:#f5efe4;--paper:#fffdf8;--ink:#211f1b;--muted:#746d62;--line:#d9cdb9;--green:#385343;--accent:#8a5b32;--shadow:0 18px 50px rgba(50,38,20,.10)}
-*{box-sizing:border-box} body{margin:0;min-height:100vh;color:var(--ink);font-family:"Yu Mincho","Hiragino Mincho ProN","Noto Serif JP",serif;background:linear-gradient(135deg,#f8f4ec,#ede0cb)}
-.wrap{max-width:940px;margin:auto;padding:24px 18px 44px}.top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}.topinfo,.actions{display:flex;gap:8px;flex-wrap:wrap}
-.pill,button{border:1px solid var(--line);background:rgba(255,253,248,.86);border-radius:999px;padding:9px 13px;color:var(--ink);font:14px system-ui,sans-serif;box-shadow:0 5px 16px rgba(50,38,20,.05)}
-button{cursor:pointer}.card{background:rgba(255,253,248,.94);border:1px solid var(--line);border-radius:28px;padding:34px 38px;box-shadow:var(--shadow)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:"Yu Mincho","Hiragino Mincho ProN","Noto Serif JP",serif;background:linear-gradient(135deg,#f8f4ec,#ede0cb)}
+.wrap{max-width:940px;margin:auto;padding:24px 18px 44px}.top{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+button{border:1px solid var(--line);background:rgba(255,253,248,.86);border-radius:999px;padding:9px 13px;color:var(--ink);font:14px system-ui,sans-serif;box-shadow:0 5px 16px rgba(50,38,20,.05);cursor:pointer}
+.card{background:rgba(255,253,248,.94);border:1px solid var(--line);border-radius:28px;padding:34px 38px;box-shadow:var(--shadow)}
 .brand{display:flex;gap:12px;align-items:center}.enso{width:42px;height:42px;border:4px solid var(--ink);border-right-color:transparent;border-radius:50%;transform:rotate(-25deg)}
 h1{font-size:36px;font-weight:500;letter-spacing:.08em;margin:0}.sub{font:13px system-ui,sans-serif;color:var(--muted);letter-spacing:.1em;margin:5px 0 0}
 .datetime{text-align:center;color:var(--muted);font:14px system-ui,sans-serif;margin:25px 0 12px}.calendar{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
 .chip{border:1px solid var(--line);border-radius:999px;padding:8px 14px;color:var(--green);font-size:15px;background:#fff}
-.word{text-align:center;font-size:clamp(52px,10vw,100px);letter-spacing:.1em;line-height:1.15;margin:38px 0 12px;white-space:nowrap}.reading{text-align:center;color:var(--accent);letter-spacing:.16em;margin-bottom:32px}
+.word{text-align:center;font-size:clamp(42px,8vw,82px);letter-spacing:.08em;line-height:1.35;margin:38px auto 28px;max-width:820px}
 .section{border-top:1px solid var(--line);padding-top:18px;margin-top:18px}.label{font:12px system-ui,sans-serif;color:var(--green);letter-spacing:.18em;margin-bottom:8px}.text{font-size:18px;line-height:1.9;margin:0}
 .practice{margin-top:24px;border-left:3px solid var(--accent);padding:12px 16px;background:#faf4e9;border-radius:0 14px 14px 0}.practice strong{display:block;font:12px system-ui,sans-serif;color:var(--accent);letter-spacing:.14em;margin-bottom:6px}
 .weather{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:24px}.mini{text-align:center;border:1px solid var(--line);border-radius:17px;padding:13px;background:#fff}.mini span{display:block;font:11px system-ui,sans-serif;color:var(--muted);margin-bottom:5px}.mini b{font:700 17px system-ui,sans-serif}
 .controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}select,input{width:100%;padding:13px;border:1px solid var(--line);border-radius:14px;background:#fffdf8;font-family:inherit;font-size:15px}
 footer{text-align:center;font:12px system-ui,sans-serif;color:var(--muted);margin-top:16px}
-@media(max-width:700px){.card{padding:24px 20px}.word{font-size:clamp(40px,13vw,68px);white-space:normal}.weather{grid-template-columns:1fr 1fr}.controls{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="top">
-    <div class="topinfo"><div class="pill" id="weatherLine">東京｜天気取得中</div><div class="pill" id="pressureLine">気圧取得中</div></div>
-    <div class="actions"><button id="todayBtn">今日</button><button id="randomBtn">ランダム</button><button id="copyBtn">コピー</button></div>
-  </div>
-  <main class="card">
-    <div class="brand"><div class="enso"></div><div><h1>今日の禅語</h1><p class="sub">A Zen word for each day</p></div></div>
-    <div class="datetime" id="datetime"></div>
-    <div class="calendar"><div class="chip" id="sekki"></div><div class="chip" id="moon"></div></div>
-    <div class="word" id="word"></div><div class="reading" id="reading"></div>
-    <div class="section"><div class="label">意味</div><p class="text" id="meaning"></p></div>
-    <div class="section"><div class="label">現代の解釈</div><p class="text" id="interpretation"></p></div>
-    <div class="practice"><strong>今日の実践</strong><div id="practice"></div></div>
-    <div class="weather">
-      <div class="mini"><span>天気</span><b id="weather">--</b></div>
-      <div class="mini"><span>現在</span><b id="temp">--℃</b></div>
-      <div class="mini"><span>最高 / 最低</span><b id="maxmin">-- / --℃</b></div>
-      <div class="mini"><span>気圧</span><b id="pressure">--</b></div>
-    </div>
-  </main>
-  <div class="controls"><select id="dateSelect"></select><input id="search" placeholder="禅語を検索"></div>
-  <footer>禅語は366日分の日付固定。二十四節気の日付と月相は簡易表示です。</footer>
-</div>
-<script>
-let allData=[], current=null;
-const $=id=>document.getElementById(id);
-const pad=n=>String(n).padStart(2,"0");
-const keyFor=d=>`${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-async function loadData(){
-  const files=Array.from({length:12},(_,i)=>`data/${pad(i+1)}.json`);
-  const months=await Promise.all(files.map(f=>fetch(f).then(r=>r.json())));
-  allData=months.flat();
-  $("dateSelect").innerHTML=allData.map((z,i)=>`<option value="${i}">${z.date}｜${z.word}</option>`).join("");
-  renderToday(); renderList();
-}
-function render(z){
-  current=z;$("word").textContent=z.word;$("reading").textContent=z.reading;$("meaning").textContent=z.meaning;
-  $("interpretation").textContent=z.interpretation;$("practice").textContent=z.practice;$("sekki").textContent=`二十四節気：${z.sekki}`;$("moon").textContent=`月相：${z.moon}`;
-  $("dateSelect").value=allData.indexOf(z);document.title=`${z.word}｜今日の禅語`;
-}
-function renderToday(){
-  const now=new Date(), key=keyFor(now), z=allData.find(x=>x.date===key)||allData[0];
-  const w=["日","月","火","水","木","金","土"];$("datetime").textContent=`${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（${w[now.getDay()]}） ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  render(z);
-}
-function renderList(q=""){const s=q.trim().toLowerCase();const found=allData.find(z=>`${z.word} ${z.reading} ${z.meaning}`.toLowerCase().includes(s));if(s&&found)render(found)}
+@media(max-width:700px){.card{padding:24px 20px}.word{font-size:clamp(34px,10vw,58px)}.weather{grid-template-columns:1fr 1fr}.controls{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<div class="top"><button id="todayBtn">今日</button><button id="randomBtn">ランダム</button><button id="copyBtn">コピー</button></div>
+<main class="card">
+<div class="brand"><div class="enso"></div><div><h1>今日の禅語</h1><p class="sub">ZEN ALMANAC · 366 DAYS</p></div></div>
+<div class="datetime" id="datetime"></div>
+<div class="calendar"><div class="chip" id="sekki"></div><div class="chip" id="moon"></div></div>
+<div class="word" id="word"></div>
+<div class="section"><div class="label">意味</div><p class="text" id="meaning"></p></div>
+<div class="section"><div class="label">現代の解釈</div><p class="text" id="interpretation"></p></div>
+<div class="practice"><strong>今日の実践</strong><div id="practice"></div></div>
+<div class="weather">
+<div class="mini"><span>天気</span><b id="weather">--</b></div>
+<div class="mini"><span>現在</span><b id="temp">--℃</b></div>
+<div class="mini"><span>最高 / 最低</span><b id="maxmin">-- / --℃</b></div>
+<div class="mini"><span>気圧</span><b id="pressure">--</b></div>
+</div></main>
+<div class="controls"><select id="dateSelect"></select><input id="search" placeholder="禅語を検索"></div>
+<footer>同じ月日には毎年同じ語が表示されます。天気・月相・二十四節気は当日の情報です。</footer>
+</div><script>
+let allData=[],current=null;const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,"0"),keyFor=d=>`${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+async function loadData(){const fs=Array.from({length:12},(_,i)=>`data/${pad(i+1)}.json`),ms=await Promise.all(fs.map(f=>fetch(f).then(r=>r.json())));allData=ms.flat();$("dateSelect").innerHTML=allData.map((z,i)=>`<option value="${i}">${z.date}｜${z.word}</option>`).join("");renderToday()}
+function solarLongitude(d){const jd=d.getTime()/86400000+2440587.5,T=(jd-2451545)/36525,L0=(280.46646+36000.76983*T+0.0003032*T*T)%360,M=(357.52911+35999.05029*T-0.0001537*T*T)*Math.PI/180,C=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(M)+(0.019993-0.000101*T)*Math.sin(2*M)+0.000289*Math.sin(3*M);return(L0+C+360)%360}
+const terms=[["春分",0],["清明",15],["穀雨",30],["立夏",45],["小満",60],["芒種",75],["夏至",90],["小暑",105],["大暑",120],["立秋",135],["処暑",150],["白露",165],["秋分",180],["寒露",195],["霜降",210],["立冬",225],["小雪",240],["大雪",255],["冬至",270],["小寒",285],["大寒",300],["立春",315],["雨水",330],["啓蟄",345]];
+function sekkiName(d){const lon=solarLongitude(d);let best=terms[0];for(const t of terms)if(((lon-t[1]+360)%360)<15)best=t;return best[0]}
+function moonName(d){try{const p=SunCalc.getMoonIllumination(d).phase;if(p<.03||p>.97)return"新月";if(p<.22)return"三日月";if(p<.28)return"上弦の月";if(p<.47)return"満ちていく月";if(p<.53)return"満月";if(p<.72)return"欠けていく月";if(p<.78)return"下弦の月";return"明け方の月"}catch(e){return"月相取得不可"}}
+function render(z){current=z;$("word").textContent=z.word;$("meaning").textContent=z.meaning;$("interpretation").textContent=z.interpretation;$("practice").textContent=z.practice;$("dateSelect").value=allData.indexOf(z);document.title=`${z.word}｜今日の禅語`}
+function renderToday(){const n=new Date(),z=allData.find(x=>x.date===keyFor(n))||allData[0],w=["日","月","火","水","木","金","土"];$("datetime").textContent=`${n.getFullYear()}年${n.getMonth()+1}月${n.getDate()}日（${w[n.getDay()]}） ${pad(n.getHours())}:${pad(n.getMinutes())}`;$("sekki").textContent=`二十四節気：${sekkiName(n)}`;$("moon").textContent=`月相：${moonName(n)}`;render(z)}
 function weatherName(c){if(c===0)return"快晴";if([1,2].includes(c))return"晴れ時々曇り";if(c===3)return"曇り";if([45,48].includes(c))return"霧";if([51,53,55,61,63,65,80,81,82].includes(c))return"雨";if([71,73,75,85,86].includes(c))return"雪";if([95,96,99].includes(c))return"雷雨";return"天気"}
 function pressureState(p){if(p<990)return"超警戒";if(p<1000)return"警戒";if(p<1008)return"注意";return"普通"}
-async function loadWeather(){
- try{
-  const u="https://api.open-meteo.com/v1/forecast?latitude=35.6762&longitude=139.6503&current=temperature_2m,weather_code,surface_pressure&daily=temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo&forecast_days=1";
-  const d=await fetch(u).then(r=>r.json()),t=Math.round(d.current.temperature_2m),p=Math.round(d.current.surface_pressure),mx=Math.round(d.daily.temperature_2m_max[0]),mn=Math.round(d.daily.temperature_2m_min[0]),w=weatherName(d.current.weather_code),ps=pressureState(p);
-  $("weatherLine").textContent=`東京｜${w}｜${t}℃ / ${mx}℃ / ${mn}℃`;$("pressureLine").textContent=`気圧 ${p} hPa｜${ps}`;$("weather").textContent=w;$("temp").textContent=`${t}℃`;$("maxmin").textContent=`${mx} / ${mn}℃`;$("pressure").textContent=ps;
- }catch(e){$("weatherLine").textContent="東京｜天気取得不可"}
-}
-$("todayBtn").onclick=renderToday;$("randomBtn").onclick=()=>render(allData[Math.floor(Math.random()*allData.length)]);
-$("dateSelect").onchange=e=>render(allData[Number(e.target.value)]);$("search").onchange=e=>renderList(e.target.value);
-$("copyBtn").onclick=async()=>{const t=`今日の禅語：${current.word}（${current.reading}）\n意味：${current.meaning}\n現代の解釈：${current.interpretation}\n今日の実践：${current.practice}`;await navigator.clipboard.writeText(t)};
-loadData();loadWeather();setInterval(loadWeather,1800000);setInterval(()=>{if(current&&current.date===keyFor(new Date()))renderToday()},30000);
-</script>
-</body></html>
+async function loadWeather(){try{const u="https://api.open-meteo.com/v1/forecast?latitude=35.6762&longitude=139.6503&current=temperature_2m,weather_code,surface_pressure&daily=temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo&forecast_days=1",d=await fetch(u).then(r=>r.json()),t=Math.round(d.current.temperature_2m),p=Math.round(d.current.surface_pressure),mx=Math.round(d.daily.temperature_2m_max[0]),mn=Math.round(d.daily.temperature_2m_min[0]);$("weather").textContent=weatherName(d.current.weather_code);$("temp").textContent=`${t}℃`;$("maxmin").textContent=`${mx} / ${mn}℃`;$("pressure").textContent=pressureState(p)}catch(e){$("weather").textContent="取得不可"}}
+$("todayBtn").onclick=renderToday;$("randomBtn").onclick=()=>render(allData[Math.floor(Math.random()*allData.length)]);$("dateSelect").onchange=e=>render(allData[Number(e.target.value)]);
+$("search").onchange=e=>{const q=e.target.value.toLowerCase(),z=allData.find(x=>`${x.word}${x.meaning}`.toLowerCase().includes(q));if(z)render(z)};
+$("copyBtn").onclick=()=>navigator.clipboard.writeText(`今日の禅語：${current.word}\n意味：${current.meaning}\n現代の解釈：${current.interpretation}\n今日の実践：${current.practice}`);
+loadData();loadWeather();setInterval(loadWeather,1800000);setInterval(renderToday,30000);
+</script></body></html>
